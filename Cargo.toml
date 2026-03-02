@@ -1,0 +1,6 @@
+[package]
+name = "learning_rust_test_project_lesson_13_gosha_dudar"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
