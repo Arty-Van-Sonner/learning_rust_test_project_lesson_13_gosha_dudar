@@ -32,7 +32,35 @@ fn parse_html(html: &str) -> ParseData {
     return ParseData { titles: title, links: links };
 }
 
+async fn process_urls(urls: Vec<String>) {
+    let mut handels = Vec::new();
+
+    for url in urls {
+        let handle = task::spawn(async move {
+            match fetch_html(url.clone()).await {
+                Ok(html) => {
+                    let data = parse_html(&html);
+                    println!("\n\nParsed Data: {:?}", data);
+                }
+                Err(e) => {
+                    println!("Failed to fetch URL: {}", e)
+                }
+            }
+        });
+        handels.push(handle);
+    }
+
+    for handle in handels {
+        handle.await.unwrap();
+    }
+}
+
 #[tokio::main]
-fn main() {
-    println!("Hello, world!");
+async fn main() {
+    let urls = vec![
+        "http://google.com".to_string(),
+        "http://youtube.com".to_string(),
+    ];
+
+    process_urls(urls).await;
 }
